@@ -8,9 +8,6 @@ import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
 
-from torch.utils.data.dataset import Subset
-
-
 import os
 import argparse
 
@@ -42,12 +39,8 @@ transform_test = transforms.Compose([
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
-
-
 train_indices = torch.arange(0, 49000)
 valid_indices = torch.arange(49000, 50000)
-
-
 
 
 train_and_valid = torchvision.datasets.CIFAR10(
@@ -68,14 +61,13 @@ trainloader = torch.utils.data.DataLoader(
 testloader = torch.utils.data.DataLoader(
     valid_dataset, batch_size=100, shuffle=False, num_workers=2)
 
-
 classes = ('plane', 'car', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck')
 
 # Model
 print('==> Building model..')
-net = VGG('VGG16')
-# net = ResNet18()
+# net = VGG('VGG19')
+net = ResNet18()
 # net = PreActResNet18()
 # net = GoogLeNet()
 # net = DenseNet121()
@@ -165,12 +157,13 @@ def test(epoch):
         }
         if not os.path.isdir('checkpoint'):
             os.mkdir('checkpoint')
-        torch.save(state, './checkpoint/vgg16_ckpt.pth')
+        torch.save(state, './checkpoint/r18_ckpt.pth')
         best_acc = acc
-
+    if not os.path.isdir('checkpoint_for_r18'):
+        os.mkdir('checkpoint_for_r18')
     if epoch == math.floor((10/100)*NUM_EPOCHS) or epoch == math.floor((30/100)*NUM_EPOCHS) or epoch == math.floor((50/100)*NUM_EPOCHS) or epoch == math.floor((70/100)*NUM_EPOCHS):
         print('saving model at:', epoch)
-        save_path = './checkpoint/epoch_'+str(epoch)+'_model.pth'
+        save_path = './checkpoint_for_r18/epoch_'+str(epoch)+'_model.pth'
         torch.save(model.state_dict(),
                     save_path)
 
